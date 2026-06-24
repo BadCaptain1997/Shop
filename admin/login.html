@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login - NEON STORE</title>
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.login-container {
+  max-width: 450px;
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  padding: 3rem 2.5rem;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+}
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.login-header .logo-icon {
+  width: 70px; height: 70px;
+  background: var(--gradient);
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  box-shadow: var(--shadow-neon);
+  margin-bottom: 1rem;
+}
+.login-header h1 {
+  font-family: 'Orbitron', sans-serif;
+  margin-bottom: 0.5rem;
+}
+.login-header p { color: var(--text-gray); }
+
+.login-form .form-group {
+  margin-bottom: 1.2rem;
+}
+.login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-gray);
+  font-size: 0.9rem;
+}
+.input-group {
+  position: relative;
+}
+.input-group i {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+}
+.login-form input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-light);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s;
+}
+.login-form input:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+.login-btn {
+  width: 100%;
+  padding: 1rem;
+  background: var(--gradient);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-neon);
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.5);
+}
+.credentials-info {
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--neon-blue);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+}
+.credentials-info p { margin: 0.3rem 0; color: var(--text-gray); }
+.credentials-info strong { color: var(--neon-blue); }
+.error-msg {
+  background: rgba(255, 0, 128, 0.1);
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+  padding: 0.8rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: none;
+}
+.error-msg.show { display: block; animation: shake 0.4s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+.back-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+.back-link a {
+  color: var(--text-gray);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.back-link a:hover { color: var(--neon-blue); }
+</style>
+</head>
+<body>
+
+<div class="bg-animation">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<div class="login-container">
+  <div class="login-header">
+    <div class="logo-icon">
+      <i class="fas fa-user-shield"></i>
+    </div>
+    <h1>Admin Login</h1>
+    <p>Welcome to NEON STORE Dashboard</p>
+  </div>
+  
+  <div class="error-msg" id="errorMsg">
+    <i class="fas fa-exclamation-circle"></i> Invalid credentials. Please try again.
+  </div>
+  
+  <form class="login-form" onsubmit="handleLogin(event)">
+    <div class="form-group">
+      <label>Username</label>
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="username" placeholder="Enter username" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="Enter password" required>
+      </div>
+    </div>
+    <button type="submit" class="login-btn">
+      <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+    </button>
+  </form>
+  
+  <div class="credentials-info">
+    <p><strong><i class="fas fa-info-circle"></i> Demo Login Credentials:</strong></p>
+    <p>Username: <strong>admin</strong></p>
+    <p>Password: <strong>admin123</strong></p>
+    <p style="margin-top:0.5rem;font-size:0.8rem;">⚠️ Change these in production!</p>
+  </div>
+  
+  <div class="back-link">
+    <a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Store</a>
+  </div>
+</div>
+
+<script>
+// Default admin credentials
+const ADMIN_CREDS = JSON.parse(localStorage.getItem('neonstore_admin') || '{"username":"admin","password":"admin123"}');
+if (!localStorage.getItem('neonstore_admin')) {
+  localStorage.setItem('neonstore_admin', JSON.stringify(ADMIN_CREDS));
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+  if (username === ADMIN_CREDS.username && password === ADMIN_CREDS.password) {
+    localStorage.setItem('neonstore_admin_logged', 'true');
+    window.location.href = 'dashboard.html';
+  } else {
+    document.getElementById('errorMsg').classList.add('show');
+    setTimeout(() => document.getElementById('errorMsg').classList.remove('show'), 3000);
+  }
+}
+
+// Auto redirect if already logged in
+if (localStorage.getItem('neonstore_admin_logged') === 'true') {
+  window.location.href = 'dashboard.html';
+}
+</script>
+</body>
+</html>
