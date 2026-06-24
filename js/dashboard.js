@@ -1,3 +1,19 @@
+const GOOGLE_DATABASE_URL = "PASTE_YOUR_NEW_EXEC_LINK_HERE";
+
+// CLOUD SYNC: Instantly updates your phone's local memory with your Google Sheet credentials
+if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "PASTE_YOUR_NEW_EXEC_LINK_HERE") {
+  fetch(GOOGLE_DATABASE_URL)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.username) {
+        let localSettings = JSON.parse(localStorage.getItem('neonstore_settings') || '{}');
+        localSettings.username = data.username;
+        localSettings.password = data.password;
+        localSettings.upiId = data.upiId;
+        localStorage.setItem('neonstore_settings', JSON.stringify(localSettings));
+      }
+    }).catch(e => console.log("Cloud sync paused:", e));
+}
 // ========== ADMIN DASHBOARD JS ==========
 
 // Check authentication
