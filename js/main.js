@@ -245,7 +245,7 @@ function initNavbarScroll() {
         current = section.getAttribute('id');
       }
     });
-    document.querySelectorAll('.nav-link').forEach(link => {
+     document.querySelectorAll('.nav-link').forEach(link => {
       link.classList.remove('active');
       if (link.getAttribute('href') === `#${current}`) {
         link.classList.add('active');
@@ -253,3 +253,4 @@ function initNavbarScroll() {
     });
   });
 }
+
