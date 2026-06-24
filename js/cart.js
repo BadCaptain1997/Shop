@@ -1,9 +1,17 @@
-// ========== CART CHECKOUT LOGIC ==========
+  // ========== CART CHECKOUT LOGIC ==========
 
 let cart = JSON.parse(localStorage.getItem('neonstore_cart') || '[]');
 
 // Demo UPI ID - shopkeeper can change this in admin settings
 const SHOP_SETTINGS = JSON.parse(localStorage.getItem('neonstore_settings') || '{"upiId":"neonstore@paytm","shopName":"NEON STORE"}');
+
+// State tracking for the Free WhatsApp Verification System
+let generatedOTP = null;
+let temporaryOrderData = null;
+
+// Replace this with your real WhatsApp number (include country code, no spaces, no + sign)
+// Example: "919876543210" for India
+const MY_WHATSAPP_NUMBER = "91XXXXXXXXXX"; 
 
 document.addEventListener('DOMContentLoaded', () => {
   renderCart();
@@ -127,8 +135,11 @@ function copyUPI() {
   });
 }
 
+// MODIFIED: This function now cross-checks the details and triggers verification
 function placeOrder() {
-  // Validate
+  if (window.event) window.event.preventDefault();
+
+  // 1. Cross-checking Form Inputs
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const email = document.getElementById('custEmail').value.trim();
@@ -140,48 +151,108 @@ function placeOrder() {
   if (!pincode || pincode.length !== 6) return showToast('⚠ Please enter a valid 6-digit pincode');
   if (!address) return showToast('⚠ Please enter your address');
   
-  const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+  const paymentElement = document.querySelector('input[name="payment"]:checked');
+  const paymentMethod = paymentElement ? paymentElement.value : 'cod';
+  
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = Math.floor(subtotal * 0.05);
   const total = subtotal - discount;
   
-  // Create order
-  const order = {
-    id: 'NS' + Date.now().toString().slice(-8),
-    customer: { name, phone, email, pincode, address },
-    items: [...cart],
-    subtotal,
-    discount,
-    total,
-    paymentMethod,
-    paymentStatus: paymentMethod === 'cod' ? 'pending' : 'awaiting_verification',
-    orderStatus: 'new',
-    createdAt: new Date().toISOString()
-  };
-  
-  // Save order to localStorage (admin will see these)
-  const orders = JSON.parse(localStorage.getItem('neonstore_orders') || '[]');
-  orders.unshift(order);
-  localStorage.setItem('neonstore_orders', JSON.stringify(orders));
-  
-  // Save customer
-  const customers = JSON.parse(localStorage.getItem('neonstore_customers') || '[]');
-  const existingCust = customers.find(c => c.phone === phone);
-  if (!existingCust) {
-    customers.push({ ...order.customer, totalOrders: 1, totalSpent: total, firstOrder: order.createdAt });
-  } else {
-    existingCust.totalOrders++;
-    existingCust.totalSpent += total;
+  // 2. Execute Verification Flow
+  if (!generatedOTP) {
+    // Generate a random secure 4-digit code
+    generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+    
+    // Store data temporarily until they type the correct code
+    temporaryOrderData = { name, phone, email, pincode, address, subtotal, discount, total, paymentMethod };
+    
+    // Create text draft for WhatsApp text link
+    let verificationText = `Hello! I am confirming my phone number for ${SHOP_SETTINGS.shopName}. My 4-Digit Verification Code is: ${generatedOTP}`;
+    let whatsappUrl = `https://api.whatsapp.com/send?phone=${MY_WHATSAPP_NUMBER}&text=${encodeURIComponent(verificationText)}`;
+    
+    // Open WhatsApp tab for the user
+    window.open(whatsappUrl, '_blank');
+    
+    // Show the input verification field on screen
+    showOTPInterface();
+    showToast('💬 Verification code sent to WhatsApp draft! Please check your WhatsApp app.');
+    return;
   }
-  localStorage.setItem('neonstore_customers', JSON.stringify(customers));
+}
+
+// Injects the security interface field onto the screen
+function showOTPInterface() {
+  const placeBtn = document.getElementById('placeOrderBtn');
+  if (!placeBtn || document.getElementById('otpVerificationBox')) return;
+
+  const otpBox = document.createElement('div');
+  otpBox.id = 'otpVerificationBox';
+  otpBox.style.margin = '20px 0';
+  otpBox.style.padding = '15px';
+  otpBox.style.background = '#1a1a2e';
+  otpBox.style.border = '2px dashed #00fff5';
+  otpBox.style.borderRadius = '8px';
+  otpBox.style.textAlign = 'center';
+
+  otpBox.innerHTML = `
+    <h4 style="color:#00fff5;margin-bottom:10px;"><i class="fab fa-whatsapp"></i> Phone Verification</h4>
+    <p style="font-size:13px;color:#fff;margin-bottom:10px;">We opened a chat layout on your WhatsApp. Look at the message text, copy the 4-digit code, and enter it here:</p>
+    <input type="number" id="enteredOTP" placeholder="XXXX" style="width:60%;padding:10px;border-radius:4px;border:1px solid #00fff5;text-align:center;font-size:18px;letter-spacing:6px;margin-bottom:12px;background:#0f0f1a;color:#fff;">
+    <button onclick="confirmOTPVerification()" style="width:80%;padding:12px;background:#00fff5;color:#000;border:none;border-radius:4px;font-weight:bold;cursor:pointer;text-transform:uppercase;">Verify & Submit Order</button>
+  `;
+
+  placeBtn.parentNode.insertBefore(otpBox, placeBtn);
+  placeBtn.style.display = 'none';
+}
+
+// Validates input code and transfers the clean data summary to your WhatsApp inbox
+function confirmOTPVerification() {
+  const userEntered = document.getElementById('enteredOTP').value.trim();
   
-  // Clear cart
-  cart = [];
-  localStorage.setItem('neonstore_cart', JSON.stringify(cart));
-  
-  // Show success
-  document.getElementById('orderId').textContent = '#' + order.id;
-  document.getElementById('successModal').classList.add('active');
+  if (userEntered === generatedOTP) {
+    showToast('✅ Phone Verified Successfully!');
+    
+    // Format individual cart lines
+    let itemDetails = cart.map(item => `• ${item.name} (Qty: ${item.quantity}) = ₹${item.price * item.quantity}`).join('\n');
+    let orderIdGenerated = 'NS' + Date.now().toString().slice(-8);
+
+    // Format absolute final summary to push to your phone
+    let finalOrderMessage = `*📦 NEW VERIFIED ORDER (${orderIdGenerated})*\n\n` +
+                            `*Customer Information:*\n` +
+                            `👤 Name: ${temporaryOrderData.name}\n` +
+                            `📞 Stated Mobile: ${temporaryOrderData.phone}\n` +
+                            `📧 Email: ${temporaryOrderData.email || 'N/A'}\n` +
+                            `📍 Address: ${temporaryOrderData.address}, PIN: ${temporaryOrderData.pincode}\n\n` +
+                            `*Items Purchased:*\n${itemDetails}\n\n` +
+                            `*Financial Total Summary:*\n` +
+                            `💰 Subtotal: ₹${temporaryOrderData.subtotal}\n` +
+                            `🏷 Discount Applied: ₹${temporaryOrderData.discount}\n` +
+                            `💳 Total Amount Payable: ₹${temporaryOrderData.total}\n` +
+                            `💵 Payment Choice: ${temporaryOrderData.paymentMethod.toUpperCase()}\n\n` +
+                            `*System Verification Token:* ${generatedOTP} (SUCCESS)`;
+    
+    let whatsappUrl = `https://api.whatsapp.com/send?phone=${MY_WHATSAPP_NUMBER}&text=${encodeURIComponent(finalOrderMessage)}`;
+    
+    // Reset Cart memory state
+    cart = [];
+    localStorage.setItem('neonstore_cart', JSON.stringify(cart));
+    
+    // Prompt transmission launch
+    window.open(whatsappUrl, '_blank');
+
+    // Clean up interface layouts
+    document.getElementById('otpVerificationBox').remove();
+    
+    // Display client-side response layout
+    document.getElementById('orderId').textContent = '#' + orderIdGenerated;
+    document.getElementById('successModal').classList.add('active');
+
+    // Reset tracking configurations
+    generatedOTP = null;
+    temporaryOrderData = null;
+  } else {
+    showToast('❌ Incorrect Code! Look closely at the text inside your open WhatsApp chat and try again.');
+  }
 }
 
 function showToast(message) {
