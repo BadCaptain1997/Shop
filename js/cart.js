@@ -5,7 +5,17 @@ const GOOGLE_DATABASE_URL = "https://script.google.com/macros/s/AKfycbzJ2o3lIwuT
 
 // ========== CART CHECKOUT LOGIC ==========
 
-let cart = JSON.parse(localStorage.getItem('neonstore_cart') || '[]');
+let cart = (function(){
+  try {
+    return (JSON.parse(localStorage.getItem('neonstore_cart') || '[]')).map(i => ({
+      ...i,
+      price: Number(i.price) || 0,
+      quantity: Number(i.quantity) || 0
+    }));
+  } catch (e) {
+    return [];
+  }
+})();
 
 // Demo UPI ID - shopkeeper can change this in admin settings
 const SHOP_SETTINGS = JSON.parse(localStorage.getItem('neonstore_settings') || '{"upiId":"neonstore@paytm","shopName":"NEON STORE"}');
@@ -198,8 +208,8 @@ function showOTPInterface() {
   otpBox.innerHTML = `
     <h4 style="color:#00fff5;margin-bottom:10px;"><i class="fab fa-whatsapp"></i> Phone Verification</h4>
     <p style="font-size:13px;color:#fff;margin-bottom:10px;">We opened a chat layout on your WhatsApp. Look at the message text, copy the 4-digit code, and enter it here:</p>
-    <input type="number" id="enteredOTP" placeholder="XXXX" style="width:60%;padding:10px;border-radius:4px;border:1px solid #00fff5;text-align:center;font-size:18px;letter-spacing:6px;margin-bottom:12px;background:#0f0f1a;color:#fff;">
-    <button onclick="confirmOTPVerification()" style="width:80%;padding:12px;background:#00fff5;color:#000;border:none;border-radius:4px;font-weight:bold;cursor:pointer;text-transform:uppercase;">Verify & Submit Order</button>
+    <input type="number" id="enteredOTP" placeholder="XXXX" style="width:60%;padding:10px;border-radius:4px;border:1px solid #00fff5;text-align:center;font-size:18px;letter-spacing:6px;margin-bot[...]
+    <button onclick="confirmOTPVerification()" style="width:80%;padding:12px;background:#00fff5;color:#000;border:none;border-radius:4px;font-weight:bold;cursor:pointer;text-transform:uppercase;"[...]
   `;
 
   placeBtn.parentNode.insertBefore(otpBox, placeBtn);
@@ -412,8 +422,8 @@ function showOTPInterface() {
   otpBox.innerHTML = `
     <h4 style="color:#00fff5;margin-bottom:10px;"><i class="fab fa-whatsapp"></i> Phone Verification</h4>
     <p style="font-size:13px;color:#fff;margin-bottom:10px;">We opened a chat layout on your WhatsApp. Look at the message text, copy the 4-digit code, and enter it here:</p>
-    <input type="number" id="enteredOTP" placeholder="XXXX" style="width:60%;padding:10px;border-radius:4px;border:1px solid #00fff5;text-align:center;font-size:18px;letter-spacing:6px;margin-bottom:12px;background:#0f0f1a;color:#fff;">
-    <button onclick="confirmOTPVerification()" style="width:80%;padding:12px;background:#00fff5;color:#000;border:none;border-radius:4px;font-weight:bold;cursor:pointer;text-transform:uppercase;">Verify & Submit Order</button>
+    <input type="number" id="enteredOTP" placeholder="XXXX" style="width:60%;padding:10px;border-radius:4px;border:1px solid #00fff5;text-align:center;font-size:18px;letter-spacing:6px;margin-bot[...]
+    <button onclick="confirmOTPVerification()" style="width:80%;padding:12px;background:#00fff5;color:#000;border:none;border-radius:4px;font-weight:bold;cursor:pointer;text-transform:uppercase;"[...]
   `;
 
   placeBtn.parentNode.insertBefore(otpBox, placeBtn);
