@@ -1,4 +1,4 @@
-const GOOGLE_DATABASE_URL = "PASTE_YOUR_NEW_EXEC_LINK_HERE";
+const GOOGLE_DATABASE_URL = "https://script.google.com/macros/s/AKfycbzJ2o3lIwuTiyyBqxZwDoVM6Lw59KLxnsLmSxvLsUOZauOAol2_4tnyWRMuZnsXL2U/exec";
 
 // CLOUD SYNC: Instantly updates your phone's local memory with your Google Sheet credentials
 if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "PASTE_YOUR_NEW_EXEC_LINK_HERE") {
