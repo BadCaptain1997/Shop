@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON STORE - Premium Online Shopping</title>
+<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Animated Background -->
+<div class="bg-animation">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo">
+      <i class="fas fa-bolt"></i>
+      <span>NEON<span class="logo-accent">STORE</span></span>
+    </a>
+    <div class="nav-menu" id="navMenu">
+      <a href="#home" class="nav-link active">Home</a>
+      <a href="#products" class="nav-link">Products</a>
+      <a href="#categories" class="nav-link">Categories</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <button class="search-btn" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
+      <a href="cart.html" class="cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <a href="admin/login.html" class="admin-btn"><i class="fas fa-user-shield"></i></a>
+      <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+  <div class="search-bar" id="searchBar">
+    <input type="text" placeholder="Search products..." id="searchInput" oninput="searchProducts()">
+    <i class="fas fa-search"></i>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-badge">⚡ Premium Quality Products</div>
+    <h1 class="hero-title">
+      <span class="glitch" data-text="WELCOME TO">WELCOME TO</span>
+      <span class="hero-brand">NEON STORE</span>
+    </h1>
+    <p class="hero-subtitle">Discover the future of shopping with our premium collection of Electronics, Cosmetics & General Store products</p>
+    <div class="hero-buttons">
+      <a href="#products" class="btn btn-primary">
+        <span>Shop Now</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+      <a href="#categories" class="btn btn-secondary">
+        <span>Browse Categories</span>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><h3>500+</h3><p>Products</p></div>
+      <div class="stat"><h3>10K+</h3><p>Happy Customers</p></div>
+      <div class="stat"><h3>24/7</h3><p>Support</p></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="floating-card card1"><i class="fas fa-mobile-alt"></i></div>
+    <div class="floating-card card2"><i class="fas fa-headphones"></i></div>
+    <div class="floating-card card3"><i class="fas fa-spa"></i></div>
+    <div class="floating-card card4"><i class="fas fa-laptop"></i></div>
+    <div class="hero-circle"></div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories" id="categories">
+  <div class="section-header">
+    <span class="section-tag">Browse</span>
+    <h2 class="section-title">Shop by <span class="gradient-text">Category</span></h2>
+    <p class="section-subtitle">Explore our wide range of premium products</p>
+  </div>
+  <div class="category-grid">
+    <div class="category-card" onclick="filterByCategory('electronics')">
+      <div class="category-icon"><i class="fas fa-mobile-alt"></i></div>
+      <h3>Electronics</h3>
+      <p>Mobile, Laptops & More</p>
+    </div>
+    <div class="category-card" onclick="filterByCategory('accessories')">
+      <div class="category-icon"><i class="fas fa-headphones"></i></div>
+      <h3>Accessories</h3>
+      <p>Headphones, Cables & More</p>
+    </div>
+    <div class="category-card" onclick="filterByCategory('cosmetics')">
+      <div class="category-icon"><i class="fas fa-spa"></i></div>
+      <h3>Cosmetics</h3>
+      <p>Beauty & Skin Care</p>
+    </div>
+    <div class="category-card" onclick="filterByCategory('home')">
+      <div class="category-icon"><i class="fas fa-home"></i></div>
+      <h3>Home & Living</h3>
+      <p>Daily Essentials</p>
+    </div>
+    <div class="category-card" onclick="filterByCategory('gadgets')">
+      <div class="category-icon"><i class="fas fa-microchip"></i></div>
+      <h3>Smart Gadgets</h3>
+      <p>Latest Tech</p>
+    </div>
+    <div class="category-card" onclick="filterByCategory('all')">
+      <div class="category-icon"><i class="fas fa-th"></i></div>
+      <h3>All Products</h3>
+      <p>View Everything</p>
+    </div>
+  </div>
+</section>
+
+<!-- Products Section -->
+<section class="products" id="products">
+  <div class="section-header">
+    <span class="section-tag">Featured</span>
+    <h2 class="section-title">Our <span class="gradient-text">Products</span></h2>
+    <p class="section-subtitle">Hand-picked premium products just for you</p>
+  </div>
+  
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-filter="all" onclick="filterProducts('all', this)">All</button>
+    <button class="filter-tab" data-filter="electronics" onclick="filterProducts('electronics', this)">Electronics</button>
+    <button class="filter-tab" data-filter="accessories" onclick="filterProducts('accessories', this)">Accessories</button>
+    <button class="filter-tab" data-filter="cosmetics" onclick="filterProducts('cosmetics', this)">Cosmetics</button>
+    <button class="filter-tab" data-filter="home" onclick="filterProducts('home', this)">Home</button>
+    <button class="filter-tab" data-filter="gadgets" onclick="filterProducts('gadgets', this)">Gadgets</button>
+  </div>
+  
+  <div class="product-grid" id="productGrid">
+    <!-- Products will be loaded here by JavaScript -->
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-truck-fast"></i></div>
+    <h3>Fast Delivery</h3>
+    <p>Quick & reliable shipping across India</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-money-bill-wave"></i></div>
+    <h3>Cash on Delivery</h3>
+    <p>Pay when you receive your order</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+    <h3>Secure Payment</h3>
+    <p>UPI QR & multiple payment options</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-rotate-left"></i></div>
+    <h3>Easy Returns</h3>
+    <p>7-day hassle-free return policy</p>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about" id="about">
+  <div class="about-content">
+    <span class="section-tag">About Us</span>
+    <h2 class="section-title">Why Choose <span class="gradient-text">Neon Store?</span></h2>
+    <p>We are your trusted neighborhood store, now online! From the latest electronics to everyday cosmetics and general essentials, we bring you premium quality products at the best prices. Our mission is to make shopping easy, fast, and reliable for everyone.</p>
+    <ul class="about-list">
+      <li><i class="fas fa-check-circle"></i> 100% Authentic Products</li>
+      <li><i class="fas fa-check-circle"></i> Best Prices Guaranteed</li>
+      <li><i class="fas fa-check-circle"></i> Fast Local Delivery</li>
+      <li><i class="fas fa-check-circle"></i> Friendly Customer Support</li>
+    </ul>
+  </div>
+  <div class="about-visual">
+    <div class="about-card">
+      <i class="fas fa-store"></i>
+      <h3>Local Store</h3>
+      <p>Trusted by community</p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact" id="contact">
+  <div class="section-header">
+    <span class="section-tag">Contact</span>
+    <h2 class="section-title">Get in <span class="gradient-text">Touch</span></h2>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <i class="fas fa-phone"></i>
+      <h3>Call Us</h3>
+      <p>+91 98765 43210</p>
+    </div>
+    <div class="contact-card">
+      <i class="fas fa-envelope"></i>
+      <h3>Email</h3>
+      <p>contact@neonstore.com</p>
+    </div>
+    <div class="contact-card">
+      <i class="fas fa-map-marker-alt"></i>
+      <h3>Visit Store</h3>
+      <p>Main Market, Your City</p>
+    </div>
+    <div class="contact-card">
+      <i class="fab fa-whatsapp"></i>
+      <h3>WhatsApp</h3>
+      <p>+91 98765 43210</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3 class="footer-logo">NEON<span class="logo-accent">STORE</span></h3>
+      <p>Your trusted online shopping destination for electronics, cosmetics, and everyday essentials.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="#">Electronics</a></li>
+        <li><a href="#">Cosmetics</a></li>
+        <li><a href="#">Accessories</a></li>
+        <li><a href="#">Home & Living</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Payment Methods</h4>
+      <div class="payment-icons">
+        <span class="pay-badge"><i class="fas fa-money-bill"></i> COD</span>
+        <span class="pay-badge"><i class="fas fa-qrcode"></i> UPI</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 NEON STORE. All Rights Reserved. | Made with <i class="fas fa-heart" style="color:#ff0080"></i></p>
+  </div>
+</footer>
+
+<!-- Product Quick View Modal -->
+<div class="modal" id="productModal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<script src="js/products.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
