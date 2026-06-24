@@ -15,7 +15,7 @@ let generatedOTP = null;
 let temporaryOrderData = null;
 
 // Replace this with your real WhatsApp number (include country code, no spaces, no + sign)
-const MY_WHATSAPP_NUMBER = "91XXXXXXXXXX"; 
+const MY_WHATSAPP_NUMBER = "917509277793"; 
 
 document.addEventListener('DOMContentLoaded', () => {
   renderCart();
