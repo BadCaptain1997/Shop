@@ -15,7 +15,7 @@ let generatedOTP = null;
 let temporaryOrderData = null;
 
 // Replace this with your real WhatsApp number (include country code, no spaces, no + sign)
-const MY_WHATSAPP_NUMBER = "917509277793"; 
+const MY_WHATSAPP_NUMBER = "7509277793"; 
 
 document.addEventListener('DOMContentLoaded', () => {
   renderCart();
@@ -38,16 +38,16 @@ function renderCart() {
         </a>
       </div>
     `;
-    customerForm.style.display = 'none';
-    paymentSection.style.display = 'none';
-    placeBtn.style.display = 'none';
+    if (customerForm) customerForm.style.display = 'none';
+    if (paymentSection) paymentSection.style.display = 'none';
+    if (placeBtn) placeBtn.style.display = 'none';
     updateSummary();
     return;
   }
   
-  customerForm.style.display = 'block';
-  paymentSection.style.display = 'block';
-  placeBtn.style.display = 'flex';
+  if (customerForm) customerForm.style.display = 'block';
+  if (paymentSection) paymentSection.style.display = 'block';
+  if (placeBtn) placeBtn.style.display = 'flex';
   
   container.innerHTML = cart.map(item => `
     <div class="cart-item">
@@ -95,10 +95,15 @@ function updateSummary() {
   const discount = Math.floor(subtotal * 0.05); // 5% discount
   const total = subtotal - discount;
   
-  document.getElementById('subtotal').textContent = `₹${subtotal}`;
-  document.getElementById('discount').textContent = `- ₹${discount}`;
-  document.getElementById('total').textContent = `₹${total}`;
-  document.getElementById('upiAmount').textContent = `₹${total}`;
+  const subtotalEl = document.getElementById('subtotal');
+  const discountEl = document.getElementById('discount');
+  const totalEl = document.getElementById('total');
+  const upiAmountEl = document.getElementById('upiAmount');
+
+  if (subtotalEl) subtotalEl.textContent = `₹${subtotal}`;
+  if (discountEl) discountEl.textContent = `- ₹${discount}`;
+  if (totalEl) totalEl.textContent = `₹${total}`;
+  if (upiAmountEl) upiAmountEl.textContent = `₹${total}`;
   
   // Update UPI ID display
   const upiIdEl = document.getElementById('upiId');
@@ -106,15 +111,21 @@ function updateSummary() {
 }
 
 function switchPayment(method) {
+  if (window.event) window.event.preventDefault();
   document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
-  event.currentTarget.closest('.payment-option').classList.add('active');
+  if (event.currentTarget) {
+    const closestOpt = event.currentTarget.closest('.payment-option');
+    if (closestOpt) closestOpt.classList.add('active');
+  }
   
   const upiSection = document.getElementById('upiSection');
-  if (method === 'upi') {
-    upiSection.style.display = 'block';
-    generateQR();
-  } else {
-    upiSection.style.display = 'none';
+  if (upiSection) {
+    if (method === 'upi') {
+      upiSection.style.display = 'block';
+      generateQR();
+    } else {
+      upiSection.style.display = 'none';
+    }
   }
 }
 
@@ -127,7 +138,7 @@ function generateQR() {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(upiUrl)}&bgcolor=ffffff&color=000000&margin=10`;
   
   const qrBox = document.getElementById('qrCodeBox');
-  qrBox.innerHTML = `<img src="${qrUrl}" alt="UPI QR Code" style="width:100%;height:100%;">`;
+  if (qrBox) qrBox.innerHTML = `<img src="${qrUrl}" alt="UPI QR Code" style="width:100%;height:100%;">`;
 }
 
 function copyUPI() {
@@ -186,7 +197,7 @@ function showOTPInterface() {
 
   otpBox.innerHTML = `
     <h4 style="color:#00fff5;margin-bottom:10px;"><i class="fab fa-whatsapp"></i> Phone Verification</h4>
-    <p style="font-size:13px;color:#fff;margin-bottom:10px;">Enter the 4-digit code from your open WhatsApp chat layout:</p>
+    <p style="font-size:13px;color:#fff;margin-bottom:10px;">We opened a chat layout on your WhatsApp. Look at the message text, copy the 4-digit code, and enter it here:</p>
     <input type="number" id="enteredOTP" placeholder="XXXX" style="width:60%;padding:10px;border-radius:4px;border:1px solid #00fff5;text-align:center;font-size:18px;letter-spacing:6px;margin-bottom:12px;background:#0f0f1a;color:#fff;">
     <button onclick="confirmOTPVerification()" style="width:80%;padding:12px;background:#00fff5;color:#000;border:none;border-radius:4px;font-weight:bold;cursor:pointer;text-transform:uppercase;">Verify & Submit Order</button>
   `;
@@ -205,8 +216,7 @@ function confirmOTPVerification() {
     let itemDetails = cart.map(item => `• ${item.name} (Qty: ${item.quantity}) = ₹${item.price * item.quantity}`).join('\n');
     let simpleItemsList = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
-    // 2. BACKEND TRANSMISSION: Safely routes the order variables straight into Google Sheets
-    if (GOOGLE_DATABASE_URL && GOOGLE_DATABASE_URL !== "PASTE_YOUR_NEW_EXEC_LINK_HERE") {
+    if (GOOGLE_DATABASE_URL) {
       fetch(GOOGLE_DATABASE_URL, {
         method: "POST",
         mode: "no-cors",
@@ -222,6 +232,55 @@ function confirmOTPVerification() {
           items: simpleItemsList,
           total: temporaryOrderData.total,
           paymentMethod: temporaryOrderData.paymentMethod,
+          date: new Date().toLocaleString('en-IN')
+        })
+      }).catch(err => console.log("Cloud Save Error: ", err));
+    }
+
+    let finalOrderMessage = `*📦 NEW VERIFIED ORDER (${orderIdGenerated})*\n\n` +
+                            `*Customer Information:*\n` +
+                            `👤 Name: ${temporaryOrderData.name}\n` +
+                            `📞 Stated Mobile: ${temporaryOrderData.phone}\n` +
+                            `📧 Email: ${temporaryOrderData.email || 'N/A'}\n` +
+                            `📍 Address: ${temporaryOrderData.address}, PIN: ${temporaryOrderData.pincode}\n\n` +
+                            `*Items Purchased:*\n${itemDetails}\n\n` +
+                            `*Financial Total Summary:*\n` +
+                            `💰 Subtotal: ₹${temporaryOrderData.subtotal}\n` +
+                            `🏷 Discount Applied: ₹${temporaryOrderData.discount}\n` +
+                            `💳 Total Amount Payable: ₹${temporaryOrderData.total}\n` +
+                            `💵 Payment Choice: ${temporaryOrderData.paymentMethod.toUpperCase()}\n\n` +
+                            `*System Verification Token:* ${generatedOTP} (SUCCESS)`;
+    
+    let whatsappUrl = `https://api.whatsapp.com/send?phone=${MY_WHATSAPP_NUMBER}&text=${encodeURIComponent(finalOrderMessage)}`;
+    
+    cart = [];
+    localStorage.setItem('neonstore_cart', JSON.stringify(cart));
+    
+    window.open(whatsappUrl, '_blank');
+    
+    const verificationBox = document.getElementById('otpVerificationBox');
+    if (verificationBox) verificationBox.remove();
+    
+    const orderIdEl = document.getElementById('orderId');
+    if (orderIdEl) orderIdEl.textContent = '#' + orderIdGenerated;
+    
+    const successModal = document.getElementById('successModal');
+    if (successModal) successModal.classList.add('active');
+
+    generatedOTP = null;
+    temporaryOrderData = null;
+  } else {
+    showToast('❌ Incorrect Code! Look closely at the text inside your open WhatsApp chat and try again.');
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.innerHTML = `<i class="fas fa-info-circle"></i><span>${message}</span>`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
           date: new Date().toLocaleString('en-IN')
         })
       }).catch(err => console.log("Cloud Save Error: ", err));
