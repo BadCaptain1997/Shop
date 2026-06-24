@@ -231,7 +231,7 @@ function confirmOTPVerification() {
                             `💵 Payment Choice: ${temporaryOrderData.paymentMethod.toUpperCase()}\n\n` +
                             `*System Verification Token:* ${generatedOTP} (SUCCESS)`;
     
-    let whatsappUrl = `https://api.whatsapp.com/send?phone=${MY_WHATSAPP_NUMBER}&text=${encodeURIComponent(finalOrderMessage)}`;
+    let whatsappUrl = `https://api.whatsapp.com/send?phone=${7509277793}&text=${encodeURIComponent(finalOrderMessage)}`;
     
     // Reset Cart memory state
     cart = [];
