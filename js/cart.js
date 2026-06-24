@@ -4,7 +4,6 @@ let cart = JSON.parse(localStorage.getItem('neonstore_cart') || '[]');
 
 // Demo UPI ID - shopkeeper can change this in admin settings
 const SHOP_SETTINGS = JSON.parse(localStorage.getItem('neonstore_settings') || '{"upiId":"neonstore@paytm","shopName":"NEON STORE"}');
-const GOOGLE_DATABASE_URL = "https://script.google.com/macros/s/AKfycbzJ2o3lIwuTiyyBqxZwDoVM6Lw59KLxnsLmSxvLsUOZauOAol2_4tnyWRMuZnsXL2U/exec";
 
 // State tracking for the Free WhatsApp Verification System
 let generatedOTP = null;
